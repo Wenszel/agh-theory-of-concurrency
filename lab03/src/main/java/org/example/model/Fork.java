@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -18,7 +18,7 @@ public class Fork {
         reentrantLock.unlock();
     }
 
-    public boolean isLocked() {
-        return reentrantLock.isLocked();
+    public boolean tryLock() {
+        return reentrantLock.tryLock();
     }
 }

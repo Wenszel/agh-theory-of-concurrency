@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.util.concurrent.Semaphore;
 
@@ -9,7 +9,7 @@ public class Waiter {
         this.semaphore = new Semaphore(maxConcurrentPhilosophers);
     }
 
-    public boolean tryAcquirePermission() throws InterruptedException {
+    public boolean tryAcquirePermission() {
         return semaphore.tryAcquire();
     }
 
