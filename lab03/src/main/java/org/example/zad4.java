@@ -1,10 +1,17 @@
 package org.example;
 
-public class zad3 {
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.Random;
+
+
+public class zad4 {
+
     private static class Philosopher extends Thread {
         private final int id;
         private final Fork leftFork;
         private final Fork rightFork;
+        private final Random random = new Random();
 
         public Philosopher(int id, Fork leftFork, Fork rightFork) {
             this.id = id;
@@ -14,12 +21,12 @@ public class zad3 {
 
         private void think() throws InterruptedException {
             System.out.println("Filozof " + id + " myśli.");
-            Thread.sleep((int)(Math.random() * 1000));
+            Thread.sleep((int) (Math.random() * 1000));
         }
 
         private void eat() throws InterruptedException {
             System.out.println("Filozof " + id + " je.");
-            Thread.sleep((int)(Math.random() * 1000));
+            Thread.sleep((int) (Math.random() * 1000));
         }
 
         @Override
@@ -28,35 +35,30 @@ public class zad3 {
                 while (true) {
                     think();
 
-                    // Filozof o parzystym numerze podnosi najpierw prawy widelec
-                    if (id % 2 == 0) {
-                        rightFork.pickUp();
-                        System.out.println("Filozof " + id + " podniósł prawy widelec.");
-                        leftFork.pickUp();
-                        System.out.println("Filozof " + id + " podniósł lewy widelec.");
-                    }
-                    // Filozof o nieparzystym numerze podnosi najpierw lewy widelec
-                    else {
+                    // Rzut monetą: true dla podniesienia lewego najpierw, false dla prawego
+                    boolean pickLeftFirst = random.nextBoolean();
+
+                    if (pickLeftFirst) {
+                        // Najpierw podnosimy lewy widelec
                         leftFork.pickUp();
                         System.out.println("Filozof " + id + " podniósł lewy widelec.");
                         rightFork.pickUp();
                         System.out.println("Filozof " + id + " podniósł prawy widelec.");
+                    } else {
+                        // Najpierw podnosimy prawy widelec
+                        rightFork.pickUp();
+                        System.out.println("Filozof " + id + " podniósł prawy widelec.");
+                        leftFork.pickUp();
+                        System.out.println("Filozof " + id + " podniósł lewy widelec.");
                     }
 
                     eat();
 
-                    // Odkładanie widelców w odwrotnej kolejności
-                    if (id % 2 == 0) {
-                        leftFork.putDown();
-                        System.out.println("Filozof " + id + " odłożył lewy widelec.");
-                        rightFork.putDown();
-                        System.out.println("Filozof " + id + " odłożył prawy widelec.");
-                    } else {
-                        rightFork.putDown();
-                        System.out.println("Filozof " + id + " odłożył prawy widelec.");
-                        leftFork.putDown();
-                        System.out.println("Filozof " + id + " odłożył lewy widelec.");
-                    }
+                    // Odkładanie widelców
+                    leftFork.putDown();
+                    System.out.println("Filozof " + id + " odłożył lewy widelec.");
+                    rightFork.putDown();
+                    System.out.println("Filozof " + id + " odłożył prawy widelec.");
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
