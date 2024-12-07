@@ -20,5 +20,21 @@ public class Main {
             availableOperations.get(action).run();
         }
         System.out.println(variables);
+
+
+        List<Pair<Operation>> dependencies = new ArrayList<>();
+        List<Pair<Operation>> independencies = new ArrayList<>();
+        for (Operation operation1: availableOperations.values()) {
+            for (Operation operation2:  availableOperations.values()) {
+                Pair<Operation> pair = new Pair(operation1, operation2);
+                if (operation1.isDependent(operation2) || operation2.isDependent(operation1)) {
+                    dependencies.add(pair);
+                } else {
+                    independencies.add(pair);
+                }
+            }
+        }
+        System.out.println(dependencies);
+        System.out.println(independencies);
     }
 }
