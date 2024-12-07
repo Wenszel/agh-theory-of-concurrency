@@ -64,4 +64,9 @@ public class Operation implements Runnable {
     public Set<Character> getVariablesUsedInOperation() {
         return variablesUsedInOperation;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(symbol);
+    }
 }
