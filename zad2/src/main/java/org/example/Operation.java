@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class Operation implements Runnable {
     public static final String OPERATION_REGEX = "([a-z])\\s*=\\s*(\\d*)([a-z])\\s*([*\\-+])\\s*(\\d*)([a-z])";
     private final char symbol;
-    private char varToModify;
+    private final char varToModify;
     private Runnable operation;
     // The purpose of storing the variables is to be able to generate dependencies between operations
     private Set<Character> variablesUsedInOperation;
@@ -58,12 +58,11 @@ public class Operation implements Runnable {
         operation.run();
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(symbol);
-    }
-
     public boolean isDependent(Operation operation) {
         return operation.variablesUsedInOperation.contains(varToModify);
+    }
+
+    public char getSymbol() {
+        return symbol;
     }
 }

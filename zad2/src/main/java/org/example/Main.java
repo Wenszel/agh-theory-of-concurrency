@@ -14,19 +14,11 @@ public class Main {
             availableOperations.put(A.get(i), new Operation(A.get(i), operationsInput.get(i), variables));
         }
 
-        char[] word = "baadcb".toCharArray();
-        for(char action: word) {
-            System.out.println(variables);
-            availableOperations.get(action).run();
-        }
-        System.out.println(variables);
-
-
-        List<Pair<Operation>> dependencies = new ArrayList<>();
-        List<Pair<Operation>> independencies = new ArrayList<>();
-        for (Operation operation1: availableOperations.values()) {
-            for (Operation operation2:  availableOperations.values()) {
-                Pair<Operation> pair = new Pair(operation1, operation2);
+        List<Pair<Character>> dependencies = new ArrayList<>();
+        List<Pair<Character>> independencies = new ArrayList<>();
+        for (Operation operation1 : availableOperations.values()) {
+            for (Operation operation2 : availableOperations.values()) {
+                Pair<Character> pair = new Pair<>(operation1.getSymbol(), operation2.getSymbol());
                 if (operation1.isDependent(operation2) || operation2.isDependent(operation1)) {
                     dependencies.add(pair);
                 } else {
@@ -34,7 +26,49 @@ public class Main {
                 }
             }
         }
-        System.out.println(dependencies);
-        System.out.println(independencies);
+        System.out.println("D = {" + dependencies + "}");
+        System.out.println("I = {" + independencies + "}");
+
+
+        char[] word = "baadcb".toCharArray();
+        System.out.println(calculateFoataClasses(word, dependencies));
+    }
+
+    private static List<List<Character>> calculateFoataClasses(char[] word, List<Pair<Character>> dependencies) {
+        int numberOfActions = word.length;
+        int takenActions = 0;
+        List<List<Character>> foataClasses = new ArrayList<>();
+        boolean[] taken = new boolean[numberOfActions];
+        List<Character> currentClass = new ArrayList<>();
+        while (takenActions < numberOfActions) {
+            for (int i = 0; i < numberOfActions; i++) {
+                if (taken[i]) continue;
+                if (canAddToCurrentClass(i, word, taken, currentClass, dependencies )) {
+                    currentClass.add(word[i]);
+                    taken[i] = true;
+                    takenActions++;
+                }
+            }
+            foataClasses.add(currentClass);
+            currentClass = new ArrayList<>();
+        }
+        return foataClasses;
+    }
+
+    private static boolean canAddToCurrentClass(int index, char[] word, boolean[] taken, List<Character> currentClass, List<Pair<Character>> dependencies) {
+        // czy w obecnej klasie sa jakies ktore przeszkadzaja
+        for (char w: currentClass) {
+            if (dependencies.contains(new Pair<>(w, word[index]))){
+                return false;
+            }
+        }
+        // czy przed ta klasa te ktore nie sa wziete przeszakdzaja
+        for (int i = index-1; i >= 0; i--) {
+            if (taken[i]) continue;
+            if (dependencies.contains(new Pair<>(word[index], word[i] ))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
